@@ -1,9 +1,10 @@
-// import express from "express"
-// var router = express.Router();
+import express from "express"
+import { getRooms } from "../controllers/getRooms.js";
 
-// /* GET home page. */
-// router.get('/', function(req, res, next) {
-//   res.render('index', { title: 'Express' });
-// });
+const indexRouter = express.Router();
 
-// module.exports = router;
+// Lấy thông tin phòng
+indexRouter.get('/rooms', getRooms);
+
+export default indexRouter;
+

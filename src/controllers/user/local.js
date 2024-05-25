@@ -2,6 +2,7 @@ import { findUser, createUser } from "../common";
 import { validEmail, pwdLen, checkPassword, hashPassword } from "../../utils/common";
 import { enToken } from "../../models/jwt";
 import { errorCodeList } from "../../constants";
+import { createCart } from "../cart";
 
 export const signin = async (req, res) => {
     try {
@@ -14,7 +15,7 @@ export const signin = async (req, res) => {
         if (!validEmail(userEmail) || !pwdLen(userPwd)) {
             return res.status(404).send({
                 success: false,
-                message: errorCodeList.invalid.code,
+                message: errorCodeList.invalid.message,
             });
         }
 
@@ -23,7 +24,7 @@ export const signin = async (req, res) => {
         if (!user) {
             return res.status(404).send({
                 success: false,
-                message: 'Email not exist',
+                message: 'Email is not exist',
             });
         }
 
@@ -39,12 +40,14 @@ export const signin = async (req, res) => {
             return res.status(200).send({
                 token,
                 user: userEmail,
+                message: 'Login success'
                 // id: user.id,
             });
         } else {
             // Unauthorized
             return res.status(404).send({
                 success: false,
+                message: 'Wrong password'
             });
         }
     } catch (err) {
@@ -69,7 +72,7 @@ export const signup = async (req, res) => {
         if (!validEmail(userEmail) || !pwdLen(userPwd)) {
             return res.status(200).send({
                 success: false,
-                message: 'errorCodeList.invalid.code',
+                message: errorCodeList.invalid.description,
             });
         }
 
@@ -79,7 +82,7 @@ export const signup = async (req, res) => {
         if (userEmailExist) {
             return res.status(200).send({
                 success: false,
-                message: errorCodeList.emailExist.code, // email exist error
+                message: errorCodeList.emailExist.description, // email exist error
             });
         }
 
@@ -106,8 +109,11 @@ export const signup = async (req, res) => {
             `++ New User added: ID[${createdUser.id}], Email[${userEmail}]'`
         );
 
+        createCart(createdUser.id)
+
         return res.status(200).send({
             success: true,
+            message: 'Register success'
         });
     } catch (err) {
         console.log(err);
@@ -131,3 +137,22 @@ export const signout = async (req, res) => {
         });
     }
 };
+
+export const getRole = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+        const query = 'SELECT role FROM accounts WHERE id = $1';
+        let dbData = await database.many(query, requestId);
+
+        return res.status(200).json({
+            success: true,
+            data: dbData,
+        });
+    } catch {
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching role",
+            error: error.message
+        });
+    }
+}

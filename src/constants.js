@@ -1,11 +1,11 @@
 export const errorCodeList = {
     emailExist: {
         code: 'EEE',
-        description: 'Sign up email exist',
+        description: 'Sign up email is existed',
     },
     emailNotExist: {
         code: 'ENE',
-        description: "User's email not exist",
+        description: "User's email is not exist",
     },
     invalid: {
         code: 'INV',

@@ -49,3 +49,24 @@ export const createUser = async user => {
         return null;
     }
 };
+
+
+export const deleteUser = async (req, res) => {
+    try {
+        const requestId = req.query.id;
+        const query = 'DELETE FROM accounts WHERE id = $1';
+        await database.query(query, requestId);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Delete user success'
+        });
+    } catch {
+        console.error("Error fetching delete user:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching delete user",
+            error: error.message
+        });
+    }
+}

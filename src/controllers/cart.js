@@ -12,9 +12,41 @@ export const createCart = async (id_user) => {
     }
 };
 
+export const addCartItem = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+        const { id_room } = req.body;
+        // Lấy id cart
+        const queryCart = 'SELECT * from user_cart WHERE id_user = $1 limit 1'
+        const cart = await database.query(queryCart, requestId)
+        if (!cart || cart.length === 0) {
+            return res.status(200).json({
+                success: false,
+                message: "User cart is not exist"
+            })
+        }
+
+        // Thêm cart item
+        const queryItem = 'INSERT INTO cart_item (id_cart, id_room) VALUES ($1, $2)';
+        await database.query(queryItem, [cart[0].id, id_room]);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Add item succes',
+        });
+
+    } catch {
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching add cart item",
+            error: error.message
+        });
+    }
+}
+
 export const getCartItem = async (req, res, error) => {
     try {
-        const requestId = req.query.id; 
+        const requestId = req.query.id;
         // Lấy id cart
         const queryCart = 'SELECT * from user_cart WHERE id_user = $1 limit 1'
         const cart = await database.query(queryCart, requestId)
@@ -26,11 +58,11 @@ export const getCartItem = async (req, res, error) => {
         }
 
         // Lấy cart item
-        const queryItem = 'SELECT * FROM cart_item WHERE id_cart = $1 limit 1';
+        const queryItem = 'SELECT * FROM cart_item WHERE id_cart = $1';
         const dbData = await database.query(queryItem, cart[0].id);
 
         if (!dbData || dbData.length === 0) {
-            return res.status(500).json({
+            return res.status(200).json({
                 success: false,
                 message: 'Cart is empty'
             })
@@ -48,3 +80,26 @@ export const getCartItem = async (req, res, error) => {
         });
     }
 }
+
+export const removeCartItem = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+
+        const queryItem = 'DELETE FROM cart_item WHERE id = $1';
+        await database.query(queryItem, requestId);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Remove item succes',
+        });
+
+    } catch {
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching remove cart item",
+            error: error.message
+        });
+    }
+}
+
+

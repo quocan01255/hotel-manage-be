@@ -1,3 +1,4 @@
+import { database } from "../../models/pool";
 import { findUser, createUser } from "../common";
 import { validEmail, pwdLen, checkPassword, hashPassword } from "../../utils/common";
 import { enToken } from "../../models/jwt";
@@ -13,7 +14,7 @@ export const signin = async (req, res) => {
 
         // validation param
         if (!validEmail(userEmail) || !pwdLen(userPwd)) {
-            return res.status(404).send({
+            return res.status(200).send({
                 success: false,
                 message: errorCodeList.invalid.message,
             });
@@ -22,7 +23,7 @@ export const signin = async (req, res) => {
         // tìm user bằng email
         const user = await findUser(userEmail);
         if (!user) {
-            return res.status(404).send({
+            return res.status(200).send({
                 success: false,
                 message: 'Email is not exist',
             });
@@ -36,16 +37,20 @@ export const signin = async (req, res) => {
             // tạo token
             const token = enToken(user);
 
+            // Lấy id user
+            const queryId = 'SELECT id from accounts WHERE email = $1';
+            const dbData = await database.one(queryId, userEmail);
+            const userId = dbData.id;
             // gửi token về client
             return res.status(200).send({
                 token,
-                user: userEmail,
+                user: {userId, userEmail},
                 message: 'Login success'
                 // id: user.id,
             });
         } else {
             // Unauthorized
-            return res.status(404).send({
+            return res.status(200).send({
                 success: false,
                 message: 'Wrong password'
             });

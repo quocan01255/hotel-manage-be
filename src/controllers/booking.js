@@ -1,6 +1,26 @@
 import { database } from '../models/pool';
 import { deleteCartItem } from './cart';
 
+
+export const getAllBookings = async (req, res, error) => {
+    try {
+        const query = 'SELECT * FROM bookings';
+        const dbData = await database.query(query);
+
+        return res.status(200).json({
+            success: true,
+            data: dbData,
+        });
+    } catch {
+        console.error("Error fetching all bookings:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching bookings",
+            error: error.message
+        });
+    }
+}
+
 export const getBookings = async (req, res, error) => {
     try {
         const requestId = req.query.id;
@@ -116,6 +136,34 @@ export const deleteBooking = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Error fetching delete booking",
+            error: error.message
+        });
+    }
+}
+
+export const getBookingInfo = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+        const query = 'SELECT * FROM booking_item WHERE id_booking = $1';
+        let dbData = await database.query(query, requestId);
+
+        const result = []
+
+        for (const item of dbData) {
+            const queryRoom = 'SELECT * FROM rooms WHERE id = $1'
+            const room = await database.query(queryRoom, item.id_room)
+            result.push(room[0].name)
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch {
+        console.error("Error fetching get booking info:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching get booking info",
             error: error.message
         });
     }

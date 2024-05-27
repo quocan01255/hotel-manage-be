@@ -70,3 +70,23 @@ export const deleteUser = async (req, res) => {
         });
     }
 }
+
+export const getTotalAccounts = async (req, res, error) => {
+    try {
+        let sqlQuery = 'SELECT COUNT(*) FROM accounts WHERE role != $1';
+    
+        const dbData = await database.query(sqlQuery, 'admin');
+    
+        return res.status(200).json({
+            success: true,
+            data: dbData
+        });
+    } catch {
+        console.error("Error fetching get total users:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching get total users",
+            error: error.message
+        });
+    }
+};

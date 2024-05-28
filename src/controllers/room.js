@@ -39,6 +39,26 @@ export const getRoomById = async (req, res, error) => {
     }
 }
 
+export const getRoomsByType = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+        const query = 'SELECT * FROM rooms WHERE type_id = $1';
+        let dbData = await database.query(query, requestId);
+
+        return res.status(200).json({
+            success: true,
+            data: dbData,
+        });
+    } catch {
+        console.error("Error fetching rooms by types:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching rooms by types",
+            error: error.message
+        });
+    }
+}
+
 export const addRoom = async (req, res, error) => {
     try {
         const { name, quantity, details, img, price, check_in, check_out, description, type_id } = req.body;
@@ -101,3 +121,43 @@ export const deleteRoom = async (req, res) => {
         });
     }
 }
+
+export const getTypeRooms = async (req, res, error) => {
+    try {
+        const query = 'SELECT * FROM room_type';
+        let dbData = await database.query(query);
+
+        return res.status(200).json({
+            success: true,
+            data: dbData,
+        });
+    } catch {
+        console.error("Error fetching type rooms:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching type rooms",
+            error: error.message
+        });
+    }
+}
+
+export const getTypeById = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+        const query = 'SELECT * FROM room_type WHERE id = $1';
+        let dbData = await database.query(query, requestId);
+
+        return res.status(200).json({
+            success: true,
+            data: dbData,
+        });
+    } catch {
+        console.error("Error fetching get type by id:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching get type by id",
+            error: error.message
+        });
+    }
+}
+

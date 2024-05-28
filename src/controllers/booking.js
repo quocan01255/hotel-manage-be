@@ -87,8 +87,6 @@ export const createBooking = async (req, res, error) => {
         const query = 'INSERT INTO bookings (name, email, total_price, id_user, address, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
         const dbData = await database.query(query, [name, email, total_price, id_user, address, phone])
 
-        console.log(dbData[0])
-
         for (const item of cart) {
             await createBookingItem(dbData[0].id, item.id_room);
             await deleteCartItem(item.id);
@@ -121,9 +119,33 @@ export const createBookingItem = async (id_booking, id_room) => {
     }
 }
 
+export const updateBooking = async (req, res) => {
+    try {
+        const requestId = req.query.id;
+        const { name, email, phone } = req.body
+        const query = 'UPDATE bookings SET name = $1, email = $2, phone = $3 WHERE id = $4'
+        await database.query(query, [name, email, phone, requestId]);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Update booking success'
+        });
+    } catch {
+        console.error("Error fetching update booking");
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching update booking",
+        });
+    }
+}
+
 export const deleteBooking = async (req, res) => {
     try {
         const requestId = req.query.id;
+
+        const queryDelete = 'DELETE FROM booking_item WHERE id_booking = $1'
+        await database.query(queryDelete, requestId);
+
         const query = 'DELETE FROM bookings WHERE id = $1';
         await database.query(query, requestId);
 
@@ -132,11 +154,10 @@ export const deleteBooking = async (req, res) => {
             message: 'Delete booking success'
         });
     } catch {
-        console.error("Error fetching delete booking:", error);
+        console.error("Error fetching delete booking");
         return res.status(500).json({
             success: false,
             message: "Error fetching delete booking",
-            error: error.message
         });
     }
 }

@@ -15,7 +15,7 @@ export const createCart = async (id_user) => {
 export const addCartItem = async (req, res, error) => {
     try {
         const requestId = req.query.id;
-        const { id_room } = req.body;
+        const { id_room, check_in, check_out } = req.body;
         // Lấy id cart
         const queryCart = 'SELECT * from user_cart WHERE id_user = $1 limit 1'
         const cart = await database.query(queryCart, requestId)
@@ -27,8 +27,8 @@ export const addCartItem = async (req, res, error) => {
         }
 
         // Thêm cart item
-        const queryItem = 'INSERT INTO cart_item (id_cart, id_room) VALUES ($1, $2)';
-        await database.query(queryItem, [cart[0].id, id_room]);
+        const queryItem = 'INSERT INTO cart_item (id_cart, id_room, check_in, check_out) VALUES ($1, $2, $3, $4)';
+        await database.query(queryItem, [cart[0].id, id_room, check_in, check_out]);
 
         return res.status(200).json({
             success: true,

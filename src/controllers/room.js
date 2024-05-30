@@ -61,10 +61,10 @@ export const getRoomsByType = async (req, res, error) => {
 
 export const addRoom = async (req, res, error) => {
     try {
-        const { name, quantity, details, img, price, check_in, check_out, description, type_id } = req.body;
+        const { name, details, img, price, description, type_id } = req.body;
 
-        const query = 'INSERT INTO rooms (name, quantity, details, img, price, check_in, check_out, description, type_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-        await database.query(query, [name, quantity, details, img, price, check_in, check_out, description, type_id]);
+        const query = 'INSERT INTO rooms (name, details, img, price, description, type_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7)';
+        await database.query(query, [name, details, img, price, description, type_id, 'available']);
 
         return res.status(200).json({
             success: true,
@@ -83,10 +83,10 @@ export const addRoom = async (req, res, error) => {
 export const updateRoom = async (req, res, error) => {
     try {
         const requestId = req.query.id;
-        const { name, quantity, details, img, price, check_in, check_out, description, type_id } = req.body;
+        const { name, details, img, price, description, type_id } = req.body;
 
-        const query = 'UPDATE rooms SET name = $1, quantity = $2, details = $3, img = $4, price = $5, check_in = $6, check_out = $7, description = $8, type_id = $9 WHERE id = $10';
-        await database.query(query, [name, quantity, details, img, price, check_in, check_out, description, type_id, requestId]);
+        const query = 'UPDATE rooms SET name = $1, details = $2, img = $3, price = $4, description = $5, type_id = $6 WHERE id = $7';
+        await database.query(query, [name, details, img, price, description, type_id, requestId]);
 
         return res.status(200).json({
             success: true,
@@ -160,4 +160,25 @@ export const getTypeById = async (req, res, error) => {
         });
     }
 }
+
+// export const searchRoom = async (req, res, error) => {
+//     try {
+//         const { check_in, check_out } = req.body;
+//         console.log(req.body)
+//         const query = 'SELECT * FROM rooms WHERE check_in >= $1 AND $2 <= check_out';
+//         let dbData = await database.query(query, [check_in, check_out]);
+
+//         return res.status(200).json({
+//             success: true,
+//             data: dbData,
+//         });
+//     } catch {
+//         console.error("Error fetching search room:", error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Error fetching search room",
+//             error: error.message
+//         });
+//     }
+// }
 

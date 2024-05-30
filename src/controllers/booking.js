@@ -88,7 +88,7 @@ export const createBooking = async (req, res, error) => {
         const dbData = await database.query(query, [name, email, total_price, id_user, address, phone])
 
         for (const item of cart) {
-            await createBookingItem(dbData[0].id, item.id_room);
+            await createBookingItem(dbData[0].id, item.id_room, item.check_in, item.check_out);
             await deleteCartItem(item.id);
         }
 
@@ -106,13 +106,13 @@ export const createBooking = async (req, res, error) => {
     }
 }
 
-export const createBookingItem = async (id_booking, id_room) => {
+export const createBookingItem = async (id_booking, id_room, check_in, check_out) => {
     try {
         const query = 'SELECT price FROM rooms WHERE id = $1';
         const room = await database.query(query, [id_room]);
 
-        const insertQuery = 'INSERT INTO booking_item (id_booking, id_room, total_price) VALUES ($1, $2, $3)';
-        await database.query(insertQuery, [id_booking, id_room, room[0].price]);
+        const insertQuery = 'INSERT INTO booking_item (id_booking, id_room, total_price, check_in, check_out) VALUES ($1, $2, $3, $4, $5)';
+        await database.query(insertQuery, [id_booking, id_room, room[0].price, check_in, check_out]);
     } catch {
         console.error("Error fetching Add booking item:", error);
         return;

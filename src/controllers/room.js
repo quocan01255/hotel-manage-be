@@ -19,6 +19,25 @@ export const getRooms = async (req, res, error) => {
     }
 }
 
+export const getAvailableRooms = async (req, res, error) => {
+    try {
+        const query = 'SELECT * FROM rooms WHERE status = $1';
+        let dbData = await database.query(query, ['available']);
+
+        return res.status(200).json({
+            success: true,
+            data: dbData,
+        });
+    } catch {
+        console.error("Error fetching available rooms:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching available rooms",
+            error: error.message
+        });
+    }
+}
+
 export const getRoomById = async (req, res, error) => {
     try {
         const requestId = req.query.id;

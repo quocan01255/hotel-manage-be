@@ -27,6 +27,16 @@ export const addCartItem = async (req, res, error) => {
         }
 
         // Thêm cart item
+        const queryRoom = 'SELECT * FROM cart_item WHERE id_room = $1'
+        const roomExisted = await database.query(queryRoom, [id_room]);
+
+        if (roomExisted && roomExisted.length > 0) {
+            return res.status(200).json({
+                success: false,
+                message: "Room has been added to cart"
+            })
+        }
+
         const queryItem = 'INSERT INTO cart_item (id_cart, id_room, check_in, check_out) VALUES ($1, $2, $3, $4)';
         await database.query(queryItem, [cart[0].id, id_room, check_in, check_out]);
 

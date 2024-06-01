@@ -111,6 +111,9 @@ export const createBookingItem = async (id_booking, id_room, check_in, check_out
         const query = 'SELECT price FROM rooms WHERE id = $1';
         const room = await database.query(query, [id_room]);
 
+        const queryStatus = 'UPDATE rooms SET status = $1 WHERE id = $2';
+        await database.query(queryStatus, ['occupied', id_room]);
+
         const insertQuery = 'INSERT INTO booking_item (id_booking, id_room, total_price, check_in, check_out) VALUES ($1, $2, $3, $4, $5)';
         await database.query(insertQuery, [id_booking, id_room, room[0].price, check_in, check_out]);
     } catch {

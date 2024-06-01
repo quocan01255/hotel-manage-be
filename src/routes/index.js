@@ -1,5 +1,5 @@
 import express from "express"
-import { addRoom, deleteRoom, getRoomById, getRooms, getRoomsByType, getTypeById, getTypeRooms, searchRoom, updateRoom } from "../controllers/room.js";
+import { addRoom, deleteRoom, getAvailableRooms, getRoomById, getRooms, getRoomsByType, getTypeById, getTypeRooms, searchRoom, updateRoom } from "../controllers/room.js";
 import { signin, signout, signup, getRole } from "../controllers/user/local.js";
 import { addCartItem, getCartItem, removeCartItem } from "../controllers/cart.js";
 import { createBooking, deleteBooking, getAllBookings, getBookingById, getBookingInfo, getBookingItem, getBookings, updateBooking } from "../controllers/booking.js";
@@ -10,6 +10,7 @@ const indexRouter = express.Router();
 // Rooms
 indexRouter.get('/rooms', getRooms);
 indexRouter.get('/getroom', getRoomById);
+indexRouter.get('/rooms-available', getAvailableRooms);
 indexRouter.post('/add-room', addRoom);
 indexRouter.delete('/delete-room', deleteRoom);
 indexRouter.patch('/update-room', updateRoom);

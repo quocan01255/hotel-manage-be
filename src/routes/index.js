@@ -1,5 +1,5 @@
 import express from "express"
-import { addRoom, deleteRoom, getAvailableRooms, getRoomById, getRooms, getRoomsByType, getTypeById, getTypeRooms, searchRoom, updateRoom } from "../controllers/room.js";
+import { addRoom, checkOut, deleteRoom, getAvailableRooms, getRoomById, getRooms, getRoomsByType, getTypeById, getTypeRooms, searchRoom, updateRoom } from "../controllers/room.js";
 import { signin, signout, signup, getRole } from "../controllers/user/local.js";
 import { addCartItem, getCartItem, removeCartItem } from "../controllers/cart.js";
 import { createBooking, deleteBooking, getAllBookings, getBookingById, getBookingInfo, getBookingItem, getBookings, updateBooking } from "../controllers/booking.js";
@@ -17,6 +17,7 @@ indexRouter.patch('/update-room', updateRoom);
 indexRouter.get('/rooms/type', getRoomsByType);
 indexRouter.get('/rooms/types', getTypeRooms);
 indexRouter.get('/rooms/type-by', getTypeById);
+indexRouter.patch('/check-out', checkOut);
 // indexRouter.post('/rooms/search', searchRoom);
 
 // Lấy thông tin giỏ hàng

@@ -201,3 +201,24 @@ export const getTypeById = async (req, res, error) => {
 //     }
 // }
 
+export const checkOut = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+
+        const query = 'UPDATE rooms SET status = $1 WHERE id = $2';
+        await database.query(query, ['available', requestId]);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Check out room success'
+        });
+    } catch {
+        console.error("Error fetching Check out room:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching Check out room",
+            error: error.message
+        });
+    }
+}
+

@@ -80,7 +80,12 @@ export const getRoomsByType = async (req, res, error) => {
 
 export const addRoom = async (req, res, error) => {
     try {
-        const { name, details, img, price, description, type_id } = req.body;
+        const { name, details, price, description, type_id } = req.body;
+        let img = req.file ? req.file.filename  : null;
+
+        if (img) {
+            img = `${process.env.LIVE_API_URL}/static/images/${img}`;
+        }
 
         const query = 'INSERT INTO rooms (name, details, img, price, description, type_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7)';
         await database.query(query, [name, details, img, price, description, type_id, 'available']);
@@ -102,7 +107,12 @@ export const addRoom = async (req, res, error) => {
 export const updateRoom = async (req, res, error) => {
     try {
         const requestId = req.query.id;
-        const { name, details, img, price, description, type_id } = req.body;
+        const { name, details, price, description, type_id } = req.body;
+        let img = req.file ? req.file.filename  : null;
+
+        if (img) {
+            img = `${process.env.LIVE_API_URL}/static/images/${img}`;
+        }
 
         const query = 'UPDATE rooms SET name = $1, details = $2, img = $3, price = $4, description = $5, type_id = $6 WHERE id = $7';
         await database.query(query, [name, details, img, price, description, type_id, requestId]);
@@ -121,9 +131,16 @@ export const updateRoom = async (req, res, error) => {
     }
 }
 
-export const deleteRoom = async (req, res) => {
+export const deleteRoom = async (req, res, error) => {
     try {
         const requestId = req.query.id;
+
+        const deleteBooking = 'DELETE FROM booking_item WHERE id_room = $1';
+        await database.query(deleteBooking, requestId);
+
+        const deleteCart = 'DELETE FROM cart_item WHERE id_room = $1';
+        await database.query(deleteCart, requestId);
+
         const query = 'DELETE FROM rooms WHERE id = $1';
         await database.query(query, requestId);
 

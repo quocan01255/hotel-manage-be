@@ -4,6 +4,7 @@ import { signin, signout, signup, getRole } from "../controllers/user/local.js";
 import { addCartItem, getCartItem, removeCartItem } from "../controllers/cart.js";
 import { createBooking, deleteBooking, getAllBookings, getBookingById, getBookingInfo, getBookingItem, getBookings, updateBooking } from "../controllers/booking.js";
 import { deleteUser, getTotalAccounts } from "../controllers/common.js";
+import { upload } from "../models/upload-img.js";
 
 const indexRouter = express.Router();
 
@@ -11,9 +12,9 @@ const indexRouter = express.Router();
 indexRouter.get('/rooms', getRooms);
 indexRouter.get('/getroom', getRoomById);
 indexRouter.get('/rooms-available', getAvailableRooms);
-indexRouter.post('/add-room', addRoom);
+indexRouter.post('/add-room', upload.single('image'), addRoom);
 indexRouter.delete('/delete-room', deleteRoom);
-indexRouter.patch('/update-room', updateRoom);
+indexRouter.patch('/update-room', upload.single('image'), updateRoom);
 indexRouter.get('/rooms/type', getRoomsByType);
 indexRouter.get('/rooms/types', getTypeRooms);
 indexRouter.get('/rooms/type-by', getTypeById);

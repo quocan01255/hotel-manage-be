@@ -3,11 +3,12 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import indexRouter from './routes/index';
 import cors from "cors";
+import path from "path"
 
 const app = express();
-app.use(cors());
 
-app.use('/static', express.static('public'));
+app.use(cors());
+app.use('/static', express.static(path.join(__dirname, 'public')))
 
 app.use(logger('dev'));
 app.use(express.json());

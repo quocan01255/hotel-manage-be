@@ -160,4 +160,34 @@ export const deleteCartItem = async (id) => {
     }
 }
 
+export const removeCartByUserId = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+        // Lấy id cart
+        const queryCart = 'SELECT * from user_cart WHERE id_user = $1 limit 1'
+        const cart = await database.query(queryCart, requestId)
+        if (!cart || cart.length === 0) {
+            return res.status(200).json({
+                success: false,
+                message: "User cart is not exist"
+            })
+        }
+
+        // Lấy cart item
+        const queryItem = 'DELETE FROM cart_item WHERE id_cart = $1';
+        await database.query(queryItem, cart[0].id);
+
+        return res.status(200).json({
+            success: true,
+            message: "Clear cart success"
+        });
+    } catch {
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching cart",
+            error: error.message
+        });
+    }
+}
+
 

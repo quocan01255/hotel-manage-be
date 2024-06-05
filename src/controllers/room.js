@@ -197,6 +197,75 @@ export const getTypeById = async (req, res, error) => {
     }
 }
 
+export const addType = async (req, res, error) => {
+    try {
+        const { name } = req.body;
+
+        const query = 'INSERT INTO room_type (name) VALUES ($1)';
+        await database.query(query, [name]);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Add room type success'
+        });
+    } catch {
+        console.error("Error fetching add room type:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching add room type",
+            error: error.message
+        });
+    }
+}
+
+export const updateType = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+        const { name } = req.body;
+
+        const query = 'UPDATE room_type SET name = $1 WHERE id = $2';
+        await database.query(query, [name, requestId]);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Update type success'
+        });
+    } catch {
+        console.error("Error fetching update type:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching update type",
+            error: error.message
+        });
+    }
+}
+
+export const deleteType = async (req, res, error) => {
+    try {
+        const requestId = req.query.id;
+
+        const deleteRoomByType = 'DELETE FROM rooms WHERE type_id = $1';
+        await database.query(deleteRoomByType, requestId);
+
+        const deleteType = 'DELETE FROM room_type WHERE id = $1';
+        await database.query(deleteType, requestId);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Delete room type success'
+        });
+    } catch {
+        console.error("Error fetching delete room type:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching delete room type",
+            error: error.message
+        });
+    }
+}
+
+
+
 // export const searchRoom = async (req, res, error) => {
 //     try {
 //         const { check_in, check_out } = req.body;

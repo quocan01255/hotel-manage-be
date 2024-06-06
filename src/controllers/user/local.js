@@ -37,14 +37,15 @@ export const signin = async (req, res) => {
             // tạo token
             const token = enToken(user);
 
-            // Lấy id user
-            const queryId = 'SELECT id from accounts WHERE email = $1';
+            // Lấy id và role user
+            const queryId = 'SELECT id, role from accounts WHERE email = $1';
             const dbData = await database.one(queryId, userEmail);
             const userId = dbData.id;
+            const userRole = dbData.role;
             // gửi token về client
             return res.status(200).send({
                 token,
-                user: {userId, userEmail},
+                user: {userId, userEmail, userRole},
                 message: 'Login success'
                 // id: user.id,
             });
